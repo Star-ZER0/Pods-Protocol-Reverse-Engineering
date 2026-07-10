@@ -1,0 +1,100 @@
+| 十进制 | 十六进制 | 反编译语义 |
+|---:|---:|---|
+| 256 | `0x0100` | getRemoteCapability |
+| 257 | `0x0101` | getRemoteMTU |
+| 258 | `0x0102` | getRemoteVID |
+| 259 | `0x0103` | getRemotePID |
+| 261 | `0x0105` | getRemoteVersion |
+| 262 | `0x0106` | getBatteryLevel |
+| 268 | `0x010C` | noise reduction mode queries |
+| 269 | `0x010D` | getFeatureSwitchStatus |
+| 271 | `0x010F` | getCurrentEqualizerMode |
+| 276 | `0x0114` | getCurrentCodecType |
+| 280 | `0x0118` | getEarRestoreData |
+| 284 | `0x011C` | getTriangleInfo |
+| 286 | `0x011E` | getEarScanData |
+| 289 | `0x0121` | getEarToneData |
+| 290 | `0x0122` | getAllEqInfo |
+| 293 | `0x0125` | getAccountKey |
+| 298 | `0x012A` | getHeadsetSpatialType |
+| 299 | `0x012B` | getGameSoundInfo |
+| 302 | `0x012E` | getAISummaryType |
+| 303 | `0x012F` | multi SPP command info |
+
+| 设置项 | Cmd | 官方方法 / 类 | Payload |
+| --- | --- | --- | --- |
+| 查远端能力 | `0x0100` | `PollCommandManager.getRemoteCapability` | 空 |
+| 查 MTU | `0x0101` | `getRemoteMTU` | `00 02`，即 512 小端 |
+| 查电量 | `0x0106` | `getBatteryLevel` | 空 |
+| 查触控按键 | `0x0108` | `getKeyFunction` | `<count> <deviceType...>`，官方常请求 `02/03/01` |
+| 查当前降噪 | `0x010C` | `getCurrentNoiseReductionMode` | `01 01` |
+| 查降噪切换项 | `0x010C` | `getNoiseReductionSwitchMode` | `02 01` 或 `02 03`、`02 04` |
+| 查智能降噪 | `0x010C` | `getIntelligentNoiseReductionMode` | `04 01` |
+| 查功能开关 | `0x010D` | `getFeatureSwitchStatus` | 动态 `<count><featureIds...>` |
+| 查 EQ 模式 | `0x010F` | `getCurrentEqualizerMode` | 空 |
+| 查所有 EQ | `0x0122` | `getAllEqInfo` | 空 |
+| 查空间音频类型 | `0x012A` | `getHeadsetSpatialType` | 空 |
+| 查游戏声音 | `0x012B` | `getGameSoundInfo` | 空 |
+| 查 AI 摘要类型 | `0x012E` | `getAISummaryType` | 空 |
+
+| 设置项 | Cmd | 官方方法 / 类 | Payload |
+| --- | --- | --- | --- |
+| 查找耳机 / find mode | `0x0400` | `BtOperate.m2696I` | `[01]` 开启，`[00]` 关闭 |
+| 设置触控按键 | `0x0401` | `BtOperate.m2699L` | `<count> [deviceType, button, buttonAction, function]...` |
+| 功能开关 | `0x0403` | `BtOperate.m2704Q` | `[featureId, status]`，`status=01/00` |
+| 设置当前降噪 | `0x0404` | `BtOperate.m2692E` / `CurrentNoiseModeInfo` | `type=1` 时 `01 01 <modeBitmask...>`；`type=2` 时 `01 02 <level>` |
+| 设置支持降噪信息 | `0x0404` | `BtOperate.m2703P` / `NoiseReductionInfo` | `[action, type, valueLE(1..4 bytes)]` |
+| 贴合度/紧密度检测开关 | `0x0405` | `C1291b.m2741b` | `[status]` |
+| 设置 EQ 模式 | `0x0406` | `BtOperate.m2695H` | `[eqModeType]` |
+| 关联设备 / 多设备相关 | `0x0408` | `BtOperate.m2701N` | `[hostType][hostMac6][count][type][mac6][state]...` |
+| 听感增强检测流程 | `0x040D` / `0x040E` | `BtOperate.m2739z` / `m2691D` / `m2712Y` | 按 action/type 组合，需按场景抓包 |
+| 系统相机状态 | `0x040F` | `BtOperate.m2690C` | `[status]` |
+| Zen mode 校验信息 | `0x0410` | `BtOperate.m2705R` | `ZenModeFileVertifyInformation.getData()` |
+| 耳机恢复数据 | `0x0411` | `BtOperate.m2693F` | `<count> <EarRestoreDataInfo...>` |
+| 个性化降噪 | `0x0412` | `BtOperate.m2700M` | `[value]` |
+| 自由对话恢复时间 | `0x0414` | `BtOperate.m2697J` | `[type]` |
+| 自定义 EQ 信息 | `0x0418` | `BtOperate.m2694G` | `[action,min,max,eqId,nameLen,name...,bandCount,(freqLE2,db)...]` |
+| 游戏 EQ 状态 | `0x0420` | `C4365J.mo7870r0` / service param `4170` | service 传 `game_type, game_status`；实际 payload 需抓包确认 |
+| 脊椎范围检测 | `0x0421` | `BtOperate.m2702O` | `[status, step]` |
+| 设置耳机空间音频类型 | `0x0422` | `BtOperate.m2698K` | `[type]` |
+| 游戏声音 | `0x0423` | `Protocol` 表含 `0x012B/0x0423`，`GameSoundInfo` | service 传 `game_type, game_status`；payload 顺序需抓包确认 |
+| LE Audio action | `0x0424` | `C4365J.mo7880w0` | service 传 `type,value`；payload 需抓包确认 |
+| Debug switch | `0x0F00` | `BtOperate.m2711X` | `[i3, i4, i10]` |
+
+| Dec | Hex | 官方条件 / 含义 |
+| --- | --- | --- |
+| 5 | `0x05` | 固定加入；日志里出现 `updateFeatureSwitchToStatus IGNORE 5` |
+| 4 | `0x04` | `wearDetection`，佩戴检测 |
+| 11 | `0x0B` | `hearingEnhancement` / `hearingEnhancementNew` |
+| 12 | `0x0C` | `personalNoise` |
+| 13 | `0x0D` | `clickTakePic` / `clickTakePicNew` |
+| 15 | `0x0F` | `zenMode` |
+| 17 | `0x11` | `multiDevicesConnect` |
+| 9 | `0x09` | `vocalEnhance` |
+| 19 | `0x13` | `headSetSoundRecord` |
+| 24 | `0x18` | `highToneQuality` |
+| 23 | `0x17` | `longPowerMode` |
+| 21 | `0x15` | `smartCall` |
+| 22 | `0x16` | `deviceLostRemind` |
+| 20 | `0x14` | `voiceWake` |
+| 25 | `0x19` | `voiceCommand` |
+| 6 | `0x06` | `gameMode` |
+| 27 | `0x1B` | `spatialTypes` |
+| 29 | `0x1D` | `bassEngineSupport` |
+| 28 | `0x1C` | `controlAutoVolumeSupport` |
+| 30 | `0x1E` | `collectLogs` |
+| 33 | `0x21` | `gameEqPkgList` |
+| 31 | `0x1F` | 平台条件 `C0282d.m617e()`，官方代码未给出直观字段名 |
+| 34 | `0x22` | `spineHealth` 相关 |
+| 35 | `0x23` | `spineHealth` 相关 |
+| 36 | `0x24` | `spineHealth` 相关 |
+| 39 | `0x27` | `gameSoundList` 或支持 `0x0423` |
+| 40 | `0x28` | `gameSoundList` 或支持 `0x0423` |
+| 48 | `0x30` | `adaptiveVolume` |
+| 49 | `0x31` | `adaptiveEar` |
+| 50 | `0x32` | `speechPerception` |
+| 52 | `0x34` | `meetingAssistant` |
+| 53 | `0x35` | `longPressVolume` |
+| 55 | `0x37` | `swiftPair` |
+| 56 | `0x38` | `hearingOptimize` |
+| 57 | `0x39` | `incomingCallControl` |
